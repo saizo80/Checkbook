@@ -66,7 +66,7 @@ if self.budget_change or self.changed:
 """
 ```
 
-And in the budgetController.py file, you must comment out lines 88 and 226. 
+And in the budgetController.py file, you must comment out, or delete, lines 88 and 226. 
 
 ```python
 # self.getFiles()
