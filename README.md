@@ -6,6 +6,9 @@ As a broke college student on a very tight budget, I came to the dilema that I n
 
 After all that was said and done, it popped into my mind that this is something that I will be using for quite some time, so it needs to be very user friendly for added incentive for me to stick with it. That's when I started working on the version with a dedicated GUI. This took some time as this was the first time I had ever worked with GUIs in Python, but it wasn't soon after, the GUI was finally done! If you work with Python GUIs professionally, please be kind when you see the, *most likely*, botched code.
 
+## Table of Contents:
+- [Requirements](### Requirements)
+
 ## Installation
 The GUI version works on Windows, Mac, and Linux. So if you are using one of those, I recommend using that version, just for the sake of simplicity. The networking comes integrated, therefore I will include instructions to use that, and I will also provide instructions to disable it if you wish to **not** use it.
 
