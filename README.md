@@ -119,7 +119,7 @@ The usage of this program is fairly straightforward in and of itself. There are 
 ### Pyinstaller:
 An interesting thing that you can do if you are on Windows or Mac is compile the program into an appropriate executable file, .exe on Windows and .command on Mac. If you do not have pyinstaller installed, it is a very easy thing to do. Just `pip install pyinstaller` will do the trick.
 
-You can also use a custom icon when you do this, just to change it from the default python icon (just note that the file must be a .ico file). For the Non-GUI version, the syntax will be:
+You can also use a custom icon when you do this, just to change it from the default python icon **(just note that the file must be a .ico file)**. For the Non-GUI version, the syntax will be:
 ```
 pyinstaller /path/to/__main__.py --icon=/path/to/.ico
 ```
