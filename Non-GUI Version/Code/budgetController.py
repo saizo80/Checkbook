@@ -22,8 +22,15 @@ class budgetController:
         self.__current_dir = os.path.dirname(os.path.realpath(__file__))
         self.__balance = 0.0
         self.stored_date = ""
-        self.__remoteTransactionPath = "/home/pi/vault/Serious_files/Financial_Documents/Budget_Files/transactions.txt"
-        self.__remoteBudgetPath = "/home/pi/vault/Serious_files/Financial_Documents/Budget_Files/budgets.txt"
+        
+        self.__remoteTransactionPath = ""
+        self.__remoteBudgetPath = ""
+        self.__ip = ""
+        self.__port = 0
+        self.__user = ""
+        self.__passwd = ""
+        self.__oldRemotePath = ""
+        
         self.ssh = paramiko.SSHClient()
         self.ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         
@@ -260,18 +267,10 @@ class budgetController:
         print ()
     
     def getFiles(self):
+        self.loadNetwork()
         print ("Downloading Files From Server . . .")
         try:
-            with open(self.__current_dir + "/network.cfg","r") as f:
-                for line in f:
-                    tokens = line.split(',')
-                    
-            ip = tokens[0]
-            port = int(tokens[1])
-            user = tokens[2]
-            passwd = tokens[3]
-            
-            self.ssh.connect(ip, port, user, passwd)
+            self.ssh.connect(self.__ip, self.__port, self.__user, self.__passwd)
             sftp = self.ssh.open_sftp()
             sftp.get(self.__remoteTransactionPath, self.__current_dir + self.__transactionFile)
             sftp.get(self.__remoteBudgetPath, self.__current_dir + self.budgetsFile)
@@ -288,16 +287,7 @@ class budgetController:
     def putFiles(self):
         print ("Uploading Files To Server . . .")
         try:
-            with open(self.__current_dir + "/network.cfg","r") as f:
-                for line in f:
-                    tokens = line.split(',')
-                    
-            ip = tokens[0]
-            port = int(tokens[1])
-            user = tokens[2]
-            passwd = tokens[3]
-            
-            self.ssh.connect(ip, port, user, passwd)
+            self.ssh.connect(self.__ip, self.__port, self.__user, self.__passwd)
             sftp = self.ssh.open_sftp()
             sftp.put(self.__current_dir + self.__transactionFile, self.__remoteTransactionPath)
             sftp.put(self.__current_dir + self.budgetsFile, self.__remoteBudgetPath)
@@ -313,22 +303,12 @@ class budgetController:
     
     def uploadOld(self):
         print ("Uploading Old File To Server . . .")
-        remotePath = "/home/pi/vault/Serious_files/Financial_Documents/Budget_Files/Old_Transactions/"
         try:
-            with open(self.__current_dir + "/network.cfg","r") as f:
-                for line in f:
-                    tokens = line.split(',')
-                    
-            ip = tokens[0]
-            port = int(tokens[1])
-            user = tokens[2]
-            passwd = tokens[3]
-            
-            self.ssh.connect(ip, port, user, passwd)
+            self.ssh.connect(self.__ip, self.__port, self.__user, self.__passwd)
             sftp = self.ssh.open_sftp()
             sftp.put(self.__current_dir + "/old_transactions/" +
                      self.stored_date.replace("\n","") + "-transactions.txt",
-                     remotePath + self.stored_date.replace("\n","")
+                     self.__oldRemotePath + self.stored_date.replace("\n","")
                      + "-transactions.txt")
             sftp.put(self.__current_dir + self.budgetsFile, self.__remoteBudgetPath)
             sftp.close()
@@ -349,3 +329,29 @@ class budgetController:
         
         for i in range(len(self.__transactions)):
             self.__transactions[i].date = self.__transactions[i].date.strftime("%m-%d-%y")
+    
+    def loadNetwork(self):
+        with open(self.__current_dir + "/network.cfg","r") as f:
+                tokens = f.readline().split(",")
+                
+                print (tokens)
+                self.__ip = tokens[0]
+                print (self.__ip)
+                self.__port = int(tokens[1])
+                print (self.__port)
+                self.__user = tokens[2]
+                print (self.__user)
+                self.__passwd = tokens[3].replace("\n","")
+                print (self.__passwd)
+                
+                buffer = f.readline()
+                self.__remoteTransactionPath = buffer.replace("\n","")
+                print (self.__remoteTransactionPath)
+                
+                buffer = f.readline()
+                self.__remoteBudgetPath = buffer.replace("\n","")
+                print (self.__remoteBudgetPath)
+                
+                buffer = f.readline()
+                self.__oldRemotePath = buffer.replace("\n","")
+                print (self.__oldRemotePath)
