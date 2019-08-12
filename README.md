@@ -27,6 +27,7 @@ Python version 3 is required to run this and there are two module requirements:
 
 - tkinter (for the GUI version)
 - paramiko (for the ssh and sftp networking)
+- The network, transactions, and budgets files need to be written in Notepad++ if on Windows (because of the way regular notepad handles carriage returns)
 
 ### Transactions File:<a name="transactions"></a>
 This is where the transactions will be stored, obviously. To start, you need to make a file called **transactions.txt**. On this first line of this file you will put your current balance as a floating point number. 
