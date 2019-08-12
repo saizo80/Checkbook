@@ -7,7 +7,15 @@ As a broke college student on a very tight budget, I came to the dilema that I n
 After all that was said and done, it popped into my mind that this is something that I will be using for quite some time, so it needs to be very user friendly for added incentive for me to stick with it. That's when I started working on the version with a dedicated GUI. This took some time as this was the first time I had ever worked with GUIs in Python, but it wasn't soon after, the GUI was finally done! If you work with Python GUIs professionally, please be kind when you see the, *most likely*, botched code.
 
 ## Table of Contents:
-[Requirements](#requirements)
+- [Installation](#installation)
+  - [Requirements](#requirements)
+  - [Transactions File](#transactions)
+  - [Budgets File](#budgets)
+- [Networking](#networking)
+  - [Network.cfg](#networkFile)
+  - [Non-GUI Version](#non-gui)
+  - [GUI Version](#gui)
+- [Usage](#usage)
 
 ## Installation
 The GUI version works on Windows, Mac, and Linux. So if you are using one of those, I recommend using that version, just for the sake of simplicity. The networking comes integrated, therefore I will include instructions to use that, and I will also provide instructions to disable it if you wish to **not** use it.
@@ -20,7 +28,7 @@ Python version 3 is required to run this and there are two module requirements:
 - tkinter (for the GUI version)
 - paramiko (for the ssh and sftp networking)
 
-### Transactions File:
+### Transactions File:<a name="transactions"></a>
 This is where the transactions will be stored, obviously. To start, you need to make a file called **transactions.txt**. On this first line of this file you will put your current balance as a floating point number. 
 
 On the second line, you will put the abbreviated version of the current month and the last two digits of the current year separated by a dash.
@@ -30,7 +38,7 @@ On the second line, you will put the abbreviated version of the current month an
 Aug-19
 ```
 
-### Budgets File:
+### Budgets File:<a name="budgets"></a>
 This is where the budgets will be stored. Starting off it is easier to write them all in the file with the correct syntax rather than using the program itself to make them, as that can become quite tedious. On each line you will simply put the name of the budget and the upper limit of the budget separated by a comma **without a space**.
 
 ```
@@ -45,7 +53,7 @@ You can make as many different budgets as you want.
 
 This one is a bit tricky. I will not go over how to set up a server, but I will show you how to use this program if you have one that ready to use, or you feeling like making one. 
 
-### Network.cfg:
+### Network.cfg:<a name="networkFile"></a>
 This is where you will store the IP address, port, username, password, and appropriate file paths for connecting to your server. On the very first line of the network.cfg file you will have all that it required for connecting to the server. It will be the IP, port, username, and password all separated by commas with **no spaces**. The port number can be a custom port, whatever you use for connecting via ssh. If you do not use a custom port, use 22 in the file as that is the default port for ssh.
 
 The second line will be the file path to the transactions.txt file, the third line will be the file path to the budgets.txt file, and the fourth line will be the file path to the folder you want to use to store the old transactions files when the month changes.
@@ -59,7 +67,7 @@ The second line will be the file path to the transactions.txt file, the third li
 
 If you instead **do not want to use the networking** these following steps must be followed exactly.
 
-#### Non-GUI Version:
+#### Non-GUI Version:<a name="non-gui"></a>
 In the __main__.py file, you must comment out, or delete, lines 159-162. Therefore, it will look like this:
 
 ```python
@@ -81,7 +89,7 @@ And in the budgetController.py file, you must comment out, or delete, lines 88 a
 
 After that, the networking will not longer be used in the program.
 
-#### GUI Version:
+#### GUI Version:<a name="gui"></a>
 In the __main__.py file, comment out, or delete, lines 105-108. 
 
 ```python
