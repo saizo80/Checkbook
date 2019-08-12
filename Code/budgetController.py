@@ -11,6 +11,7 @@ import budgets
 import os
 import traceback
 import paramiko
+from datetime import datetime
 
 class budgetController:
     def __init__(self):
@@ -165,6 +166,8 @@ class budgetController:
         if choice != -1:
             newDate = input("Please enter date in this format mm-dd-yy: ")
             self.__transactions[choice - 1].date = newDate
+        
+        self.sortDates()
     
     
     def clearScreen(self, clear):
@@ -337,4 +340,12 @@ class budgetController:
             exit()
         else:
             print ("Old Files Uploaded Successfully.")
-            
+    
+    def sortDates(self):
+        for i in range(len(self.__transactions)):
+            self.__transactions[i].date = datetime.strptime(self.__transactions[i].date, "%m-%d-%y")
+        
+        self.__transactions.sort(key=lambda r: r.date)
+        
+        for i in range(len(self.__transactions)):
+            self.__transactions[i].date = self.__transactions[i].date.strftime("%m-%d-%y")
