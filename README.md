@@ -16,6 +16,7 @@ After all that was said and done, it popped into my mind that this is something 
   - [Non-GUI Version](#non-gui)
   - [GUI Version](#gui)
 - [Usage](#usage)
+  - [Pyinstaller](#pyinstaller)
 
 ## Installation
 The GUI version works on Windows, Mac, and Linux. So if you are using one of those, I recommend using that version, just for the sake of simplicity. The networking comes integrated, therefore I will include instructions to use that, and I will also provide instructions to disable it if you wish to **not** use it.
@@ -116,8 +117,7 @@ And after that, the networking will not longer be used.
 The usage of this program is fairly straightforward in and of itself. There are proper labels and everything should be self explanatory. One thing that you need to know is that **if you make changes, you must use the quit option/button in the main menu**. If you have made changes and you exit out of the program without letting it **gracefully** shutdown, it will not save any of the changes that you have made. This is very important, especially if you are making many changes at a time.
 
 ### Pyinstaller:
-An interesting thing that you can do if you are on Windows or Mac is compile the program into an appropriate executable file, .exe on Windows and .command on Mac. If you do not have pyinstaller installed, it is a very easy thing to do. Just 
-`pip install pyinstaller` will do the trick.
+An interesting thing that you can do if you are on Windows or Mac is compile the program into an appropriate executable file, .exe on Windows and .command on Mac. If you do not have pyinstaller installed, it is a very easy thing to do. Just `pip install pyinstaller` will do the trick.
 
 You can also use a custom icon when you do this, just to change it from the default python icon (just note that the file must be a .ico file). For the Non-GUI version, the syntax will be:
 ```
