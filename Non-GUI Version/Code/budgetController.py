@@ -334,24 +334,24 @@ class budgetController:
         with open(self.__current_dir + "/network.cfg","r") as f:
                 tokens = f.readline().split(",")
                 
-                print (tokens)
+            
                 self.__ip = tokens[0]
-                print (self.__ip)
+                
                 self.__port = int(tokens[1])
-                print (self.__port)
+                
                 self.__user = tokens[2]
-                print (self.__user)
+                
                 self.__passwd = tokens[3].replace("\n","")
-                print (self.__passwd)
+                
                 
                 buffer = f.readline()
                 self.__remoteTransactionPath = buffer.replace("\n","")
-                print (self.__remoteTransactionPath)
+                
                 
                 buffer = f.readline()
                 self.__remoteBudgetPath = buffer.replace("\n","")
-                print (self.__remoteBudgetPath)
+                
                 
                 buffer = f.readline()
                 self.__oldRemotePath = buffer.replace("\n","")
-                print (self.__oldRemotePath)
+                
