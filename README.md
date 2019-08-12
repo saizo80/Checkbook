@@ -114,3 +114,19 @@ And after that, the networking will not longer be used.
 
 ## Usage:
 The usage of this program is fairly straightforward in and of itself. There are proper labels and everything should be self explanatory. One thing that you need to know is that **if you make changes, you must use the quit option/button in the main menu**. If you have made changes and you exit out of the program without letting it **gracefully** shutdown, it will not save any of the changes that you have made. This is very important, especially if you are making many changes at a time.
+
+### Pyinstaller:
+An interesting thing that you can do if you are on Windows or Mac is compile the program into an appropriate executable file, .exe on Windows and .command on Mac. If you do not have pyinstaller installed, it is a very easy thing to do. Just 
+`pip install pyinstaller` will do the trick.
+
+You can also use a custom icon when you do this, just to change it from the default python icon (just note that the file must be a .ico file). For the Non-GUI version, the syntax will be:
+```
+pyinstaller /path/to/__main__.py --icon=/path/to/.ico
+```
+And for the GUI version I recommend using the following:
+```
+pyinstaller /path/to/__main__.py --noconsole --icon=/path/to/.ico
+```
+The `--noconsole` will ensure that the command prompt will not open when the GUI version is launched.
+
+With either of these commands, it will create a few folders wherever your __main__.py file is located. Move the transactions.txt, budgets.txt, and network.cfg into the dist/__main__/ folder (where the __main__.exe file is). Then you can make a shortcut to the .exe or .command file and put that wherever you want. Then just launching that app will open up the application for you.
