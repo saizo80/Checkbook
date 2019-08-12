@@ -1,5 +1,5 @@
 # Checkbook Program
-Written by Matthew Thornton, @matt8094
+Written by Matthew Thornton
 
 ## About:
 As a broke college student on a very tight budget, I came to the dilema that I needed a way of accurately keeping up with my budgets and finances. I could have used a regular checkbook, but, as any programmer knows, it's way more fun to write a program to do it for you. So this program was born. It started out as just a command line program that would read and write from local files on the computer. Then I came across the problem that I have multiple devices, and it would not do to have access to this program restricted to just one device. Luckily I have a server for these kind of issues. So the network part of the program was born. It will connect to a server upon startup and grab the files from there, then read from them. If there are any changes made to the files, it will upload them to the server when the program is **gracefully** ended. 
@@ -10,6 +10,12 @@ After all that was said and done, it popped into my mind that this is something 
 The GUI version works on Windows, Mac, and Linux. So if you are using one of those, I recommend using that version, just for the sake of simplicity. The networking comes integrated, therefore I will include instructions to use that, and I will also provide instructions to disable it if you wish to **not** use it.
 
 Download the code file of whichever version you want, and place it wherever you want in your filesystem. I recommend **not** placing it anywhere that administrator priviledges are required. In the folder of the code, you will need to make 3 different files. I will cover the transactions file and the budgets file here, and the networking file will be covered later.
+
+### Requirements:
+Python version 3 is required to run this and there are two module requirements:
+
+- tkinter (for the GUI version)
+- paramiko (for the ssh and sftp networking)
 
 ### Transactions File:
 This is where the transactions will be stored, obviously. To start, you need to make a file called **transactions.txt**. On this first line of this file you will put your current balance as a floating point number. 
@@ -39,12 +45,13 @@ This one is a bit tricky. I will not go over how to set up a server, but I will 
 ### Network.cfg:
 This is where you will store the IP address, port, username, password, and appropriate file paths for connecting to your server. On the very first line of the network.cfg file you will have all that it required for connecting to the server. It will be the IP, port, username, and password all separated by commas with **no spaces**. The port number can be a custom port, whatever you use for connecting via ssh. If you do not use a custom port, use 22 in the file as that is the default port for ssh.
 
-The second line will be the file path to the transactions.txt file and the third line will be the file path to the budgets.txt file.
+The second line will be the file path to the transactions.txt file, the third line will be the file path to the budgets.txt file, and the fourth line will be the file path to the folder you want to use to store the old transactions files when the month changes.
 
 ```
 10.0.0.0,22,username,password
 /home/server/path/to/transactions.txt
 /home/server/path/to/budgets.txt
+/home/server/path/to/old_transactions/
 ```
 
 If you instead **do not want to use the networking** these following steps must be followed exactly.
@@ -59,10 +66,14 @@ if self.budget_change or self.changed:
 """
 ```
 
-And in the budgetController.py file, you must comment out line 81. 
+And in the budgetController.py file, you must comment out lines 88 and 226. 
 
 ```python
 # self.getFiles()
+```
+
+```python
+# self.uploadOld()
 ```
 
 After that, the networking will not longer be used in the program.
@@ -77,10 +88,17 @@ if BUDGET_CHANGED or CHANGED:
 """
 ```
 
-And in the budgetController.py file, comment out or delete line 86.
+And in the budgetController.py file, comment out or delete lines 93 and 235.
 
 ```python
 # self.getFiles()
 ```
 
+```python
+# self.uploadOld()
+```
+
 And after that, the networking will not longer be used.
+
+## Usage:
+The usage of this program is fairly straightforward in and of itself. There are proper labels and everything should be self explanatory. One thing that you need to know is that **if you make changes, you must use the quit option/button in the main menu**. If you have made changes and you exit out of the program without letting it **gracefully** shutdown, it will not save any of the changes that you have made. This is very important, especially if you are making many changes at a time.
