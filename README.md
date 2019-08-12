@@ -1,5 +1,5 @@
 # Checkbook Program
-Written by Matthew Thornton
+Written by Matthew Thornton j
 
 ## About:
 As a broke college student on a very tight budget, I came to the dilema that I needed a way of accurately keeping up with my budgets and finances. I could have used a regular checkbook, but, as any programmer knows, it's way more fun to write a program to do it for you. So this program was born. It started out as just a command line program that would read and write from local files on the computer. Then I came across the problem that I have multiple devices, and it would not do to have access to this program restricted to just one device. Luckily I have a server for these kind of issues. So the network part of the program was born. It will connect to a server upon startup and grab the files from there, then read from them. If there are any changes made to the files, it will upload them to the server when the program is **gracefully** ended. 
