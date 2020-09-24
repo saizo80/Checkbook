@@ -6,6 +6,6 @@ class Budget():
     
     def toString(self):
         return """{}
-Cap: ${}
-Current : ${}
-Remaining: ${}""".format(self.name, self.cap, self.current, self.cap-self.current)
+Cap: ${:.2f}
+Current : ${:.2f}
+Remaining: ${:.2f}""".format(self.name, self.cap, self.current, self.cap + self.current)

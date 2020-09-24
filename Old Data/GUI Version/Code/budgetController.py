@@ -174,13 +174,9 @@ class budgetController:
         
         for i in range(len(self.transactions)):
             if self.transactions[i].date == date:
-                #print ("date success")
                 if self.transactions[i].budgetType == budgetType:
-                    #print ("budget type success")
                     if self.transactions[i].amount == amount:
-                        #print ('amount success')
                         if self.transactions[i].description == description:
-                            #print ('description success')
                             self.transactions[i].date = newDate
                             break
         self.sortDates()
