@@ -129,9 +129,30 @@ class Functions():
             transaction.descrip = descrip.strip() 
         self.writeTransactions()   
     
+    def removeTransaction(self, data):
+        transaction = self.comboboxReturn(data)
+        self.budgets.get(transaction.budget).current -= transaction.amount
+        self.balance -= transaction.amount
+        self.transactions.remove(transaction)
+        self.sortDates()
+        self.writeTransactions()
+        
     def writeTransactions(self):
         with open("transactions.cfg", "w") as f:
             f.write("{},{:.2f}".format(self.date,self.balance))
             for x in self.transactions:
                 f.write("\n{:.2f},{},{},{}".format(x.amount, x.budget,
-                                            x.date, x.descrip))    
+                                            x.date, x.descrip))   
+    
+    def getBudgets(self):
+        display = ""
+        divide = "___________________\n"
+        for i in self.budgets:
+            display += "{}\n{}\n".format(self.budgets.get(i).report(), divide)
+        return display 
+    
+    def budgetsCombo(self):
+        buffer = []
+        for i in self.budgets:
+            buffer.append(i)
+        return buffer

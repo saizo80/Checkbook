@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 import checkbookFunctions, os
 from datetime import date
 
@@ -27,7 +28,7 @@ class tkinterApp(tk.Tk):
    
         # iterating through a tuple consisting 
         # of the different page layouts 
-        for F in (MainPage, TransactionsPage, BudgetsPage, addTransaction, editTransactions): 
+        for F in (MainPage, TransactionsPage, BudgetsPage, addTransaction, editTransactions, editBudgets): 
    
             frame = F(self.container, self) 
    
@@ -87,7 +88,7 @@ class TransactionsPage(tk.Frame):
         label.pack(fill=tk.X, pady=10)
         
         self.txt = tk.Text(self, borderwidth=1, relief="sunken")
-        self.txt.config(font=SMALLFONT, undo=True, wrap='word')
+        self.txt.config(font=SMALLFONT, undo=True, wrap='word', width=40, height=20)
         self.txt.pack(padx=2, pady=2)
         self.txt.insert(1.0, tty.getTransactions())
 
@@ -280,6 +281,15 @@ class editTransactions(tk.Frame):
         self.descriptionButton = ttk.Button(self.descriptionFrame, text="Change Description", command =self.showDescription)
         self.descriptionButton.pack()
         
+        # - - - - - - - - - - - - - - - - - - 
+        # Delete
+        
+        deleteFrame = tk.Frame(self, relief=tk.RIDGE)
+        deleteFrame.pack(pady=5)
+        
+        deleteButton = ttk.Button(deleteFrame, text="Delete", command = lambda : self.deleteMethod(controller))
+        deleteButton.pack()
+        
         enterButton = ttk.Button(self, text="Enter", width=25, command = lambda : self.submitChanges(controller))
         enterButton.pack(pady=10)
         
@@ -320,6 +330,13 @@ class editTransactions(tk.Frame):
     def reset(self, controller):
         controller.showFrameAndDestroy(TransactionsPage, editTransactions)
     
+    def deleteMethod(self, controller):
+        if messagebox.askyesno("Warning", "Delete {}?".format(self.combobox_value.get())):
+            tty.removeTransaction(self.combobox_value.get())
+            controller.updateAll()
+            controller.showFrameAndDestroy(TransactionsPage, editTransactions)
+        
+    
     def update(self):
         try:
             self.combo['values'] = tty.getTransactionsCombo()
@@ -336,36 +353,47 @@ class editTransactions(tk.Frame):
         controller.updateAll()
         controller.showFrameAndDestroy(TransactionsPage, editTransactions)
         
+
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+         
 class BudgetsPage(tk.Frame):  
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent) 
         
-        label = ttk.Label(self, text ="Budget Goals", font = LARGEFONT) 
+        label = tk.Label(self, text ="Budgets", font = LARGEFONT) 
         label.configure(anchor="center")
         label.pack(fill=tk.X, pady=10)
-   
-        button2 = ttk.Button(self, text ="Report", command = self.temp)  
-        button2.pack(fill=tk.X, pady=10)
+        
+        self.txt = tk.Text(self, borderwidth=1, relief="sunken")
+        self.txt.config(font=SMALLFONT, undo=True, wrap='word', width=40, height=20)
+        self.txt.pack()
+        self.txt.insert(1.0, tty.getBudgets())
+        
+        scrollb = ttk.Scrollbar(self, command=self.txt.yview)
+        scrollb.pack(side=tk.RIGHT)
+        self.txt['yscrollcommand'] = scrollb.set
+        
+        button3 = ttk.Button(self, text="Edit Budgets", command = lambda : controller.show_frame(editBudgets))
+        button3.pack(fill=tk.X)
         
         returnButton = ttk.Button(self, text ="Return", command = lambda : controller.show_frame(MainPage)) 
         returnButton.pack(fill=tk.X, pady=10)
-    def temp(self):
-        print (tty.bugReport())
+    def update(self):
+        self.txt.delete("1.0", "end")
+        self.txt.insert(1.0, tty.getBudgets())
+        
+class editBudgets(tk.Frame):  
+    def __init__(self, parent, controller): 
+        tk.Frame.__init__(self, parent) 
+        
+        self.combobox_value = tk.StringVar()
+        self.combo = ttk.Combobox(self, height=10, width=50, textvariable=self.combobox_value)
+        self.combo.pack()
+        try:
+            self.combo['values'] = tty.budgetsCombo()
+        except:
+            pass
+        
    
 def center(win):
     win.update_idletasks()
@@ -385,7 +413,7 @@ if __name__ == "__main__":
     
     app = tkinterApp() 
     
-    app.geometry("400x550")
+    app.geometry("400x600")
     #app.maxsize(500, 500)
     
     app.title("CheckBook")
