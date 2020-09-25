@@ -9,10 +9,8 @@ today = todayBuffer.strftime('%b-%y')
 transactionDate = todayBuffer.strftime('%m-%d-%y')
 
 class tkinterApp(tk.Tk): 
-      
     # __init__ function for class tkinterApp  
     def __init__(self, *args, **kwargs):  
-          
         # __init__ function for class Tk 
         tk.Tk.__init__(self, *args, **kwargs) 
           
@@ -67,17 +65,62 @@ class MainPage(tk.Frame):
         self.label.configure(anchor="center")
         self.label.pack(fill=tk.X, pady=10)
         
+        self.balanceLabel = tk.Label(self, text="Balance:\n{:.2f}".format(tty.balance), font = LARGEFONT) 
+        self.balanceLabel.configure(anchor="center")
+        self.balanceLabel.pack(fill=tk.X, pady=10)
+        
         button1 = ttk.Button(self, text="Transactions", command = lambda : controller.show_frame(TransactionsPage))
         button1.pack(fill=tk.X, pady=10)
         
-        button2 = ttk.Button(self, text="Budget Goals", command = lambda : controller.show_frame(BudgetsPage))
+        button2 = ttk.Button(self, text="Budgets", command = lambda : controller.show_frame(BudgetsPage))
         button2.pack(fill=tk.X, pady=10)
         
+        changeBalance = ttk.Button(self, text="Change Balance", command = lambda : self.changeBalance(controller))
+        changeBalance.pack(fill=tk.X, pady=10)
         killButton = ttk.Button(self, text="Quit", command = tty.kill)
         killButton.pack(fill=tk.X, pady=10)
         
-    def button3Click(self):
-        tty.jam(self.label)
+    def update(self):
+        self.balanceLabel.configure(text="Balance:\n{:.2f}".format(tty.balance))
+    
+    def changeBalance(self, controller):
+        def on_entry_click_name(event, text, entry):
+            if entry.get() == text:
+                entry.delete(0, "end")
+                entry.insert(0, "")
+                entry.config(foreground='black')
+        def on_focusout(event, text, entry):
+            if entry.get() == '':
+                entry.insert(0, text)
+                entry.config(foreground='grey')
+        win = tk.Toplevel()
+        center(win)
+        win.wm_title("Change Balance")
+        
+        balanceFrame = tk.Frame(win, relief=tk.RIDGE)
+        balanceFrame.pack(pady=5, fill=tk.X)
+        
+        balanceEntry = ttk.Entry(balanceFrame)
+        balanceEntry.insert(0, "Balance")
+        balanceEntry.bind('<FocusIn>', lambda event, text="Balance", 
+                       entry=balanceEntry : on_entry_click_name(event, text, entry))
+        balanceEntry.bind('<FocusOut>', lambda event, text='Balance',
+                       entry=balanceEntry : on_focusout(event, text, entry))
+        balanceEntry.config(foreground='grey')
+        balanceEntry.pack()
+        
+        submitButton = ttk.Button(win, text="Change", command = lambda : 
+            self.submitNewBalance(controller, balanceEntry.get(), win))
+        submitButton.pack(pady=5, fill=tk.X)
+        
+        returnButton = ttk.Button(win, text="Cancel", command = lambda : win.destroy())
+        returnButton.pack(pady=5, fill=tk.X)
+        win.grab_set()
+    def submitNewBalance(self, controller, balance, win):
+        tty.balance = float(balance)
+        tty.writeTransactions()
+        win.destroy()
+        controller.updateAll()
         
 class TransactionsPage(tk.Frame):  
     def __init__(self, parent, controller): 
@@ -126,14 +169,14 @@ class addTransaction(tk.Frame):
         # Specify Budget Type:
         self.budgetType = tk.StringVar()
         self.budgetType.set("0")
-        budgetFrame = tk.LabelFrame(self, text="Budget Type", relief=tk.RIDGE, pady=6)
+        self.budgetFrame = tk.LabelFrame(self, text="Budget Type", relief=tk.RIDGE, pady=6)
         #budgetFrame.grid(row=3, column=1, padx=6, sticky=tk.N + tk.S + tk.E + tk.W)
-        budgetFrame.pack(pady=5)
+        self.budgetFrame.pack(pady=5)
         
         budgetrow = 1
         budgetcolumn = 1
         for i in tty.budgets:
-            budget = ttk.Radiobutton(budgetFrame,text=tty.budgets.get(i).name,
+            budget = ttk.Radiobutton(self.budgetFrame,text=tty.budgets.get(i).name,
                                      variable=self.budgetType,
                                      value=tty.budgets.get(i).name)
             budget.grid(row=budgetrow,column = budgetcolumn, sticky=tk.W + tk.N)
@@ -216,6 +259,20 @@ class addTransaction(tk.Frame):
         self.dateEntry = ttk.Entry(self.dateFrame)
     def reset(self, controller):
         controller.showFrameAndDestroy(TransactionsPage, addTransaction)
+    def update(self):
+        budgetrow = 1
+        budgetcolumn = 1
+        for i in tty.budgets:
+            budget = ttk.Radiobutton(self.budgetFrame,text=tty.budgets.get(i).name,
+                                     variable=self.budgetType,
+                                     value=tty.budgets.get(i).name)
+            budget.grid(row=budgetrow,column = budgetcolumn, sticky=tk.W + tk.N)
+            #budget.pack()
+            if budgetcolumn is 2:
+                budgetcolumn = 1
+                budgetrow += 1
+            else:
+                budgetcolumn +=1
         
 
 class editTransactions(tk.Frame):
@@ -346,16 +403,13 @@ class editTransactions(tk.Frame):
     def submitChanges(self, controller):
         date = self.dateEntry.get()
         amount = self.amountEntry.get()
-        descrip = self.description.get("1.0", "end")
+        descrip = self.description.get("0.0", "end")
         budget = self.budgetType.get()
         data = self.combobox_value.get()
         tty.editTransaction(date, budget, amount, descrip, data)
         controller.updateAll()
         controller.showFrameAndDestroy(TransactionsPage, editTransactions)
-        
-
-        
-         
+          
 class BudgetsPage(tk.Frame):  
     def __init__(self, parent, controller): 
         tk.Frame.__init__(self, parent) 
@@ -374,13 +428,65 @@ class BudgetsPage(tk.Frame):
         self.txt['yscrollcommand'] = scrollb.set
         
         button3 = ttk.Button(self, text="Edit Budgets", command = lambda : controller.show_frame(editBudgets))
-        button3.pack(fill=tk.X)
+        button3.pack(fill=tk.X, pady=5)
+        
+        addButton = ttk.Button(self, text="Create New Budget", command = lambda : self.addBudget(controller))
+        addButton.pack(fill=tk.X, pady=5)
         
         returnButton = ttk.Button(self, text ="Return", command = lambda : controller.show_frame(MainPage)) 
-        returnButton.pack(fill=tk.X, pady=10)
+        returnButton.pack(fill=tk.X, pady=5)
     def update(self):
         self.txt.delete("1.0", "end")
         self.txt.insert(1.0, tty.getBudgets())
+    def addBudget(self, controller):
+        def on_entry_click_name(event, text, entry):
+            if entry.get() == text:
+                entry.delete(0, "end")
+                entry.insert(0, "")
+                entry.config(foreground='black')
+        def on_focusout(event, text, entry):
+            if entry.get() == '':
+                entry.insert(0, text)
+                entry.config(foreground='grey')
+        win = tk.Toplevel()
+        center(win)
+        win.wm_title("Create Budget")
+        
+        nameFrame = tk.Frame(win, relief=tk.RIDGE)
+        nameFrame.pack(pady=5, fill=tk.X)
+        nameEntry = ttk.Entry(nameFrame)
+        nameEntry.insert(0, "Budget Name")
+        nameEntry.bind('<FocusIn>', lambda event, text="Budget Name", 
+                       entry=nameEntry : on_entry_click_name(event, text, entry))
+        nameEntry.bind('<FocusOut>', lambda event, text='Budget Name',
+                       entry=nameEntry : on_focusout(event, text, entry))
+        nameEntry.config(foreground='grey')
+        nameEntry.pack()
+        
+        amountFrame = tk.Frame(win, relief=tk.RIDGE)
+        amountFrame.pack(pady=5, fill=tk.X)
+        amountEntry = ttk.Entry(nameFrame)
+        amountEntry.insert(0, "Budget Limit")
+        amountEntry.bind('<FocusIn>', lambda event, text='Budget Limit',
+                         entry=amountEntry : on_entry_click_name(event, text, entry))
+        amountEntry.bind('<FocusOut>', lambda event, text='Budget Limit',
+                         entry=amountEntry : on_focusout(event, text, entry))
+        amountEntry.config(foreground='grey')
+        amountEntry.pack()
+        
+        submitButton = ttk.Button(win, text="Create", command = lambda : 
+            self.submitNewBudget(controller, nameEntry.get(), amountEntry.get(), win))
+        submitButton.pack(pady=5, fill=tk.X)
+        
+        returnButton = ttk.Button(win, text="Cancel", command = lambda : win.destroy())
+        returnButton.pack(pady=5, fill=tk.X)
+        win.grab_set()
+    
+    def submitNewBudget(self, controller, name, cap, win):
+        tty.createNewBudget(name, cap)
+        win.destroy()
+        controller.updateAll()
+        
         
 class editBudgets(tk.Frame):  
     def __init__(self, parent, controller): 
@@ -389,6 +495,79 @@ class editBudgets(tk.Frame):
         self.combobox_value = tk.StringVar()
         self.combo = ttk.Combobox(self, height=10, width=50, textvariable=self.combobox_value)
         self.combo.pack()
+        try:
+            self.combo['values'] = tty.budgetsCombo()
+        except:
+            pass
+        
+        # - - - - - - - - - - - - - - - - -
+        # Name
+        self.name = tk.StringVar()
+        self.name = ""
+        
+        self.nameFrame = tk.Frame(self, relief=tk.RIDGE)
+        self.nameFrame.pack(pady=5)
+        self.nameEntry = ttk.Entry(self.nameFrame)
+        
+        self.nameButton = ttk.Button(self.nameFrame, text = "Change Name", command = self.showName)
+        self.nameButton.pack()
+        
+        # - - - - - - - - - - - - - - - - -
+        # Cap
+        self.cap = tk.StringVar()
+        self.cap = ""
+        
+        self.capFrame = tk.Frame(self, relief=tk.RIDGE)
+        self.capFrame.pack(pady=5)
+        self.capEntry = ttk.Entry(self.capFrame)
+        
+        self.capButton = ttk.Button(self.capFrame, text="Change Limit", command = self.showCap)
+        self.capButton.pack()
+        
+        deleteFrame = tk.Frame(self, relief=tk.RIDGE)
+        deleteFrame.pack(pady=5)
+        
+        deleteButton = ttk.Button(deleteFrame, text="Delete", command = lambda : self.deleteMethod(controller))
+        deleteButton.pack()
+        
+        enterButton = ttk.Button(self, text="Enter", width=25, command = lambda : self.submitChanges(controller))
+        enterButton.pack(pady=10)
+        
+        quitButton = ttk.Button(self, text="Cancel", width=25, command= lambda : self.reset(controller))
+        quitButton.pack()
+    
+    def showName(self):
+        self.nameButton.destroy()
+        self.nameEntry.insert(0, self.combobox_value.get())
+        self.nameEntry.pack()
+    
+    def showCap(self):
+        self.capButton.destroy()
+        self.capEntry.insert(0, "{:.2f}".format(tty.budgets.get(self.combobox_value.get()).cap))
+        self.capEntry.pack()
+        
+    def submitChanges(self, controller):
+        name = self.nameEntry.get()
+        cap = self.capEntry.get()
+        tty.editBudget(self.combobox_value.get(), name, cap)
+        controller.updateAll()
+        controller.showFrameAndDestroy(BudgetsPage, editBudgets)
+    
+    def reset(self, controller):
+        controller.showFrameAndDestroy(BudgetsPage, editBudgets)
+        
+    def deleteMethod(self, controller):
+        counter = 0
+        for i in tty.transactions:
+            if  i.budget == self.combobox_value.get():
+                counter += 1
+        if messagebox.askyesno("Warning", "Delete {}?\nThis will affect {} transaction(s).".format(self.combobox_value.get(), counter)):
+            tty.removeBudget(self.combobox_value.get())
+            controller.updateAll()
+            controller.showFrameAndDestroy(BudgetsPage, editBudgets)
+    
+    
+    def update(self):
         try:
             self.combo['values'] = tty.budgetsCombo()
         except:
@@ -409,7 +588,7 @@ def center(win):
 if __name__ == "__main__":
     LARGEFONT = ("Arial", 35)
     SMALLFONT = ("Arial", 13)
-    tty = checkbookFunctions.Functions()
+    tty = checkbookFunctions.Functions(today)
     
     app = tkinterApp() 
     
