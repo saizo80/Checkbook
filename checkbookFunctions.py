@@ -26,7 +26,7 @@ class Functions():
         try:
             with open("budgets.cfg", "r") as f:
                 for line in f:
-                    if line is not "":
+                    if line != "":
                         temp = line.split(",")
                         self.createBudget(temp[0], float(temp[1].strip()), 0)
         except:
@@ -38,13 +38,13 @@ class Functions():
             with open("transactions.cfg", 'r') as f:
                 tempCounter = 0
                 for line in f:
-                    if tempCounter is 0:
+                    if tempCounter == 0:
                         self.date = line.split(",")[0]
                         self.balance = float(line.split(",")[1])
+                        tempCounter += 1
                     else:
                         temp = line.split(",")
                         self.createTransaction(float(temp[0]), temp[1], temp[2], temp[3])
-                    tempCounter += 1
         except:
             messagebox.showinfo("Error", "Transactions file not found. File will be created.\nPlease enter balance.")
             with open("transactions.cfg", "w+") as f:
@@ -123,20 +123,20 @@ class Functions():
     
     def editTransaction(self, date, budget, amount, descrip, data):
         transaction = self.comboboxReturn(data)
-        if date is not "":
+        if date != "":
             transaction.date = date
             self.sortDates()
-        if budget is not "0":
+        if budget != "0":
             self.budgets.get(transaction.budget).current -= transaction.amount
             transaction.budget = budget
             self.budgets.get(transaction.budget).current += transaction.amount
-        if amount is not "":
+        if amount != "":
             self.budgets.get(transaction.budget).current -= transaction.amount
             self.balance -= transaction.amount
             transaction.amount = float(amount)
             self.balance += transaction.amount
             self.budgets.get(transaction.budget).current += transaction.amount
-        if descrip is not "\n":
+        if descrip != "\n":
             transaction.descrip = descrip.strip() 
         self.writeTransactions()   
     
@@ -177,9 +177,9 @@ class Functions():
         for i in self.budgets:
             if self.budgets.get(i).name == budget:
                 temp = self.budgets.get(i)
-        if name is not "":
+        if name != "":
             temp.name = name
-        if cap is not "":
+        if cap != "":
             temp.cap = float(cap)
         self.writeBudgets()
     
