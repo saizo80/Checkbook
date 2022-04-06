@@ -1,3 +1,4 @@
+from logging import root
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
@@ -181,7 +182,7 @@ class addTransaction(tk.Frame):
                                      value=tty.budgets.get(i).name)
             budget.grid(row=budgetrow,column = budgetcolumn, sticky=tk.W + tk.N)
             #budget.pack()
-            if budgetcolumn is 2:
+            if budgetcolumn == 2:
                 budgetcolumn = 1
                 budgetrow += 1
             else:
@@ -239,7 +240,7 @@ class addTransaction(tk.Frame):
         quitButton.pack()
 
     def passInfo(self, controller):
-        if self.dateEntry.get() is "":
+        if self.dateEntry.get() == "":
             tty.addTransaction(float(self.amountEntry.get()), self.budgetType.get(),
                               transactionDate,(self.description.get("1.0", "end")))
         else:
@@ -268,7 +269,7 @@ class addTransaction(tk.Frame):
                                      value=tty.budgets.get(i).name)
             budget.grid(row=budgetrow,column = budgetcolumn, sticky=tk.W + tk.N)
             #budget.pack()
-            if budgetcolumn is 2:
+            if budgetcolumn == 2:
                 budgetcolumn = 1
                 budgetrow += 1
             else:
@@ -362,7 +363,7 @@ class editTransactions(tk.Frame):
                                      value=tty.budgets.get(i).name)
             budget.grid(row=budgetrow,column = budgetcolumn, sticky=tk.W + tk.N)
             #budget.pack()
-            if budgetcolumn is 2:
+            if budgetcolumn == 2:
                 budgetcolumn = 1
                 budgetrow += 1
             else:
@@ -599,6 +600,6 @@ if __name__ == "__main__":
     
     center(app)
     
-    os.system("clear")
+    #os.system("clear")
     os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "Python" to true' ''')
-    app.mainloop()        
+    app.mainloop()       
